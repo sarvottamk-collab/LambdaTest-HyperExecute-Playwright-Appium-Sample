@@ -14,7 +14,7 @@ const {expect} = require("expect");
       "network": true,
       "video": true,
       "console": true,
-      "idleTimeout": 3000,
+      "idleTimeout": 120,
       "queueTimeout": 900,
       "projectName": "New UI",
     },
@@ -50,17 +50,23 @@ const {expect} = require("expect");
     expect(title).toEqual("Playwright at DuckDuckGo");
     // Mark the test as completed or failed
     await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({ action: "setTestStatus", arguments: {status: "passed", remark: "Assertions passed" },})}`);
+    const sleep = ms => new Promise(res => setTimeout(res, ms));
+await sleep(5000); 
     await teardown(page, context, device)
   } catch (e) {
     await page.evaluate(_ => {}, `lambdatest_action: ${JSON.stringify({action: "setTestStatus", arguments: { status: "failed", remark: e.stack }})}`);
+    const sleep = ms => new Promise(res => setTimeout(res, ms));
+await sleep(5000); 
     await teardown(page, context, device)
     throw e.stack
   }
-
+  
 })();
 
 async function teardown(page, context, device) {
   await page.close();
   await context.close();
-  await device.close();
+  await device.close();   
+// if using device.close() it will show test status stopped and in the job aborted
+// IF not using device.close() it will show test passed but will take 2 minutes and then Job will show stopped
 }

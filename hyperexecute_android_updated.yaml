@@ -1,0 +1,30 @@
+version: 0.1
+runson: linux
+
+autosplit: true
+appium: true
+concurrency: 1
+
+
+cacheKey: '{{ checksum "package-lock.json" }}'
+cacheDirectories:
+  - node_modules
+
+frameworkStatusOnly: true
+
+pre:
+  - npm install
+  - npx playwright install
+  - npm install -D @playwright/test
+
+testDiscovery:
+  type: raw
+  mode: remote
+  shell: bash
+  command: cat pw_androidtests.txt
+
+testRunnerCommand: 	node $test
+
+
+
+jobLabel: [node, playwright, appium, browser-mobile]
